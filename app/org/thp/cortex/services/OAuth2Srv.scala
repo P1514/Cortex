@@ -41,7 +41,7 @@ object OAuth2Config {
       grantType = configuration.getOptional[String]("auth.oauth2.grantType").getOrElse("authorization_code")
       authorizationUrl <- configuration.getOptional[String]("auth.oauth2.authorizationUrl")
       tokenUrl         <- configuration.getOptional[String]("auth.oauth2.tokenUrl")
-      userUrl          <- configuration.getOptional[String]("auth.oauth2.userUrl")
+      userUrl          = configuration.getOptional[String]("auth.oauth2.userUrl").getOrElse("")
       scope            <- configuration.getOptional[Seq[String]]("auth.oauth2.scope")
       authorizationHeader = configuration.getOptional[String]("auth.oauth2.authorizationHeader").getOrElse("Bearer")
       autoupdate          = configuration.getOptional[Boolean]("auth.sso.autoupdate").getOrElse(false)
@@ -92,7 +92,7 @@ class OAuth2Srv(
       } else {
         (for {
           token       <- getToken(oauth2Config, request)
-          userData    <- if (oauth2Config.userUrl.isEmpty()) getUserDataFromToken (token) else getUserData(oauth2Config, token)
+          userData    <- if (oauth2Config.userUrl == "") getUserDataFromToken (token) else getUserData(oauth2Config, token)
           authContext <- authenticate(oauth2Config, request, userData)
         } yield Right(authContext)).recoverWith {
           case error => Future.failed(AuthenticationError(s"OAuth2 authentication failure: ${error.getMessage}"))
@@ -177,7 +177,7 @@ class OAuth2Srv(
         )
       )
       .transform {
-        case Success(r) if r.status == 200 && oauth2Config.userUrl == null => Success((r.json \ "id_token").asOpt[String].getOrElse(""))
+        case Success(r) if r.status == 200 && oauth2Config.userUrl == "" => Success((r.json \ "id_token").asOpt[String].getOrElse(""))
         case Success(r) if r.status == 200                       => Success((r.json \ "access_token").asOpt[String].getOrElse(""))
         case Failure(error)                                      => Failure(AuthenticationError(s"OAuth2 token verification failure ${error.getMessage}"))
         case Success(r)                                          => Failure(AuthenticationError(s"OAuth2/token unexpected response from server (${r.status} ${r.statusText})"))
