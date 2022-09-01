@@ -11,14 +11,10 @@ target
 .DS_Store
 *.py[cod]
 /report-templates/*.zip
-<<<<<<< HEAD
 .bloop
 .metals
 .vscode
-
-=======
 /.bsp
->>>>>>> 619a70fb70f3633ed9b6f3c313b64d3d64b045f7
 
 /bin/
 !/bin/activator
