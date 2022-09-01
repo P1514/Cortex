@@ -10,6 +10,7 @@ import play.api.libs.json.JsObject
 import play.api.libs.ws.WSClient
 import play.api.mvc.{RequestHeader, Result, Results}
 import play.api.{Configuration, Logger}
+import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -40,11 +41,11 @@ object OAuth2Config {
       grantType = configuration.getOptional[String]("auth.oauth2.grantType").getOrElse("authorization_code")
       authorizationUrl <- configuration.getOptional[String]("auth.oauth2.authorizationUrl")
       tokenUrl         <- configuration.getOptional[String]("auth.oauth2.tokenUrl")
-      userUrl          <- configuration.getOptional[String]("auth.oauth2.userUrl")
+      userUrl          = configuration.getOptional[String]("auth.oauth2.userUrl").getOrElse("")
       scope            <- configuration.getOptional[Seq[String]]("auth.oauth2.scope")
       authorizationHeader = configuration.getOptional[String]("auth.oauth2.authorizationHeader").getOrElse("Bearer")
-      autocreate          = configuration.getOptional[Boolean]("auth.sso.autocreate").getOrElse(false)
       autoupdate          = configuration.getOptional[Boolean]("auth.sso.autoupdate").getOrElse(false)
+      autocreate          = configuration.getOptional[Boolean]("auth.sso.autocreate").getOrElse(false)
     } yield OAuth2Config(
       clientId,
       clientSecret,
@@ -56,8 +57,9 @@ object OAuth2Config {
       userUrl,
       scope,
       authorizationHeader,
-      autocreate,
-      autoupdate
+      autoupdate,
+      autocreate
+
     )
 }
 
@@ -90,7 +92,7 @@ class OAuth2Srv(
       } else {
         (for {
           token       <- getToken(oauth2Config, request)
-          userData    <- getUserData(oauth2Config, token)
+          userData    <- if (oauth2Config.userUrl == "") getUserDataFromToken (token) else getUserData(oauth2Config, token)
           authContext <- authenticate(oauth2Config, request, userData)
         } yield Right(authContext)).recoverWith {
           case error => Future.failed(AuthenticationError(s"OAuth2 authentication failure: ${error.getMessage}"))
@@ -175,9 +177,10 @@ class OAuth2Srv(
         )
       )
       .transform {
-        case Success(r) if r.status == 200 => Success((r.json \ "access_token").asOpt[String].getOrElse(""))
-        case Failure(error)                => Failure(AuthenticationError(s"OAuth2 token verification failure ${error.getMessage}"))
-        case Success(r)                    => Failure(AuthenticationError(s"OAuth2/token unexpected response from server (${r.status} ${r.statusText})"))
+        case Success(r) if r.status == 200 && oauth2Config.userUrl == "" => Success((r.json \ "id_token").asOpt[String].getOrElse(""))
+        case Success(r) if r.status == 200                       => Success((r.json \ "access_token").asOpt[String].getOrElse(""))
+        case Failure(error)                                      => Failure(AuthenticationError(s"OAuth2 token verification failure ${error.getMessage}"))
+        case Success(r)                                          => Failure(AuthenticationError(s"OAuth2/token unexpected response from server (${r.status} ${r.statusText})"))
       }
   }
 
@@ -196,6 +199,25 @@ class OAuth2Srv(
         case Failure(error)                => Failure(AuthenticationError(s"OAuth2 user data fetch failure ${error.getMessage}"))
         case Success(r)                    => Failure(AuthenticationError(s"OAuth2/userinfo unexpected response from server (${r.status} ${r.statusText})"))
       }
+  }
+
+  /**
+    * Client decode user data from OAuth2 id_token
+    * @param token the token
+    * @return
+    */
+  private def getUserDataFromToken(token: String): Future[JsObject] = {
+    logger.trace(s"Decoding $token")
+    val claims = Future{
+      val encodedClaims = token.split('.')(1)
+      val decodedClaims = new String(java.util.Base64.getDecoder.decode(encodedClaims))
+      Json.parse(decodedClaims).as[JsObject]
+    }
+
+    claims.transform({
+      case Success(json) if (json \ "roles" != null)       => Success(json)
+      case Success(json)                                   => Failure(AuthenticationError(s"Oauth ID_Token roles not present ($json)"))
+    })
   }
 
   private def authenticate(oauth2Config: OAuth2Config, request: RequestHeader, userData: JsObject): Future[AuthContext] =
