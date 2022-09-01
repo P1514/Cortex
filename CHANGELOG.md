@@ -1,5 +1,48 @@
 # Change Log
 
+## [3.1.6](https://github.com/TheHive-Project/Cortex/milestone/32) (2022-06-22)
+
+**Fixed bugs:**
+
+- Web frontend doesn't work [\#419](https://github.com/TheHive-Project/Cortex/issues/419)
+
+## [3.1.5](https://github.com/TheHive-Project/Cortex/milestone/29) (2022-06-22)
+
+**Implemented enhancements:**
+
+- Improve logs for troubleshooting [\#412](https://github.com/TheHive-Project/Cortex/issues/412)
+- Add API to check status of several jobs [\#417](https://github.com/TheHive-Project/Cortex/issues/417)
+
+**Fixed bugs:**
+
+- Job timeout doesn't work if threadpool is full [\#410](https://github.com/TheHive-Project/Cortex/issues/410)
+- Update libraries [\#416](https://github.com/TheHive-Project/Cortex/issues/416)
+
+**Closed issues:**
+
+- Add missing dependencies on Docker image [\#413](https://github.com/TheHive-Project/Cortex/issues/413)
+- [Bug ] Authentication Bypass Vulnerability [\#418](https://github.com/TheHive-Project/Cortex/issues/418)
+
+## [3.1.4 - Update library log4j-to-slf4j to version 2.17.0](https://github.com/TheHive-Project/Cortex/milestone/33) (2022-05-24)
+
+
+
+## [3.1.3](https://github.com/TheHive-Project/Cortex/milestone/31) (2021-11-10)
+
+**Fixed bugs:**
+
+- The build of frontend fails [\#389](https://github.com/TheHive-Project/Cortex/issues/389)
+
+## [3.1.2](https://github.com/TheHive-Project/Cortex/milestone/30) (2021-11-05)
+
+**Implemented enhancements:**
+
+- Create a docker image with all dependencies [\#388](https://github.com/TheHive-Project/Cortex/issues/388)
+
+**Closed issues:**
+
+- More settings on docker containers instantiated by Cortex [\#387](https://github.com/TheHive-Project/Cortex/issues/387)
+
 ## [3.1.1](https://github.com/TheHive-Project/Cortex/milestone/28) (2021-03-01)
 
 **Implemented enhancements:**
@@ -38,6 +81,7 @@
 **Implemented enhancements:**
 
 - Handle second/minute-rates limits on Flavors and Analyzers [\#164](https://github.com/TheHive-Project/Cortex/issues/164)
+- Remove Elasticsearch cluster configuration option [\#230](https://github.com/TheHive-Project/Cortex/pull/230)
 - Docker image has many CVE's open against it [\#238](https://github.com/TheHive-Project/Cortex/issues/238)
 - Analyzer reports "no output" when it fails [\#241](https://github.com/TheHive-Project/Cortex/issues/241)
 - Cortex logs the Play secret key at startup. [\#244](https://github.com/TheHive-Project/Cortex/issues/244)
@@ -58,16 +102,16 @@
 
 ## [3.0.0-RC4](https://github.com/TheHive-Project/Cortex/milestone/22) (2019-07-11)
 
-**Closed issues:**
-
-- dockerhub sample uses the wrong port [\#203](https://github.com/TheHive-Project/Cortex/issues/203)
-- docker version of cortex prints a lot of errors for auth failures [\#205](https://github.com/TheHive-Project/Cortex/issues/205)
-
 **Fixed bugs:**
 
 - Login error after Cortex upgrade to 3 [\#199](https://github.com/TheHive-Project/Cortex/issues/199)
 - docker version of cortex breaks when you don't create a user immediately [\#204](https://github.com/TheHive-Project/Cortex/issues/204)
 - Responder run displayed as Analyzer run [\#207](https://github.com/TheHive-Project/Cortex/issues/207)
+
+**Closed issues:**
+
+- dockerhub sample uses the wrong port [\#203](https://github.com/TheHive-Project/Cortex/issues/203)
+- docker version of cortex prints a lot of errors for auth failures [\#205](https://github.com/TheHive-Project/Cortex/issues/205)
 
 ## [3.0.0-RC3](https://github.com/TheHive-Project/Cortex/milestone/20) (2019-06-28)
 
@@ -113,11 +157,6 @@
 - Add PAP property to jobs list [\#146](https://github.com/TheHive-Project/Cortex/issues/146)
 - Add configuration for drone continuous integration [\#156](https://github.com/TheHive-Project/Cortex/issues/156)
 
-**Closed issues:**
-
-- conf/logback.xml: Rotate logs [\#62](https://github.com/TheHive-Project/Cortex/issues/62)
-- Build Error on NodeJS 8 [\#142](https://github.com/TheHive-Project/Cortex/issues/142)
-
 **Fixed bugs:**
 
 - GUI Search Function is broken [\#145](https://github.com/TheHive-Project/Cortex/issues/145)
@@ -125,6 +164,11 @@
 - PAP field is ignored from job modal [\#152](https://github.com/TheHive-Project/Cortex/issues/152)
 - Unable to disable invalid responders [\#157](https://github.com/TheHive-Project/Cortex/issues/157)
 - Wrong checks of role when an user is created [\#158](https://github.com/TheHive-Project/Cortex/issues/158)
+
+**Closed issues:**
+
+- conf/logback.xml: Rotate logs [\#62](https://github.com/TheHive-Project/Cortex/issues/62)
+- Build Error on NodeJS 8 [\#142](https://github.com/TheHive-Project/Cortex/issues/142)
 
 ## [2.1.2](https://github.com/TheHive-Project/Cortex/milestone/17) (2018-10-12)
 
@@ -167,16 +211,16 @@
 - Automated response via Cortex [\#110](https://github.com/TheHive-Project/Cortex/issues/110)
 - New TheHive-Project repository [\#112](https://github.com/TheHive-Project/Cortex/issues/112)
 
-**Closed issues:**
-
-- Unable to update user [\#106](https://github.com/TheHive-Project/Cortex/issues/106)
-- Refreshing analyzers does not refresh definition if already defined [\#115](https://github.com/TheHive-Project/Cortex/issues/115)
-
 **Fixed bugs:**
 
 - Fix redirection from Migration page to login on 401 error [\#114](https://github.com/TheHive-Project/Cortex/issues/114)
 - Analyzers filter in Jobs History view is limited to 25 analyzers [\#116](https://github.com/TheHive-Project/Cortex/issues/116)
 - First analyze of a "file" always fail, must re-run the analyze a second time [\#117](https://github.com/TheHive-Project/Cortex/issues/117)
+
+**Closed issues:**
+
+- Unable to update user [\#106](https://github.com/TheHive-Project/Cortex/issues/106)
+- Refreshing analyzers does not refresh definition if already defined [\#115](https://github.com/TheHive-Project/Cortex/issues/115)
 
 ## [2.0.4](https://github.com/TheHive-Project/Cortex/milestone/13) (2018-04-13)
 
